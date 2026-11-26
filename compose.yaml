@@ -1,0 +1,50 @@
+name: meeting-service
+
+services:
+  api:
+    image: meeting-api:v1
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    env_file:
+      - .env
+    environment:
+      SERVICE_HOST: 0.0.0.0
+      SERVICE_PORT: "8000"
+      APP_VERSION: compose-check
+    expose:
+      - "8000"
+    init: true
+    restart: unless-stopped
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import json; from urllib.request import urlopen; response = urlopen('http://127.0.0.1:8000/api/health', timeout=3); assert json.load(response)['status'] == 'ok'"
+      interval: 10s
+      timeout: 5s
+      start_period: 20s
+      retries: 5
+    networks:
+      - service
+
+  web:
+    image: meeting-web:v2
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    environment:
+      API_UPSTREAM: http://api:8000
+    ports:
+      - "127.0.0.1:8080:8080"
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - service
+
+networks:
+  service:
+    driver: bridge

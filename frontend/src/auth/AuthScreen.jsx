@@ -28,7 +28,7 @@ export default function AuthScreen() {
   }
   return <main className="auth-page"><header className="auth-brand">모임 <span>팀 일정</span></header><section className="auth-content">
     <h1>{mode === "login" ? "로그인" : "이메일 회원가입"}</h1>
-    <p className="muted">팀 워크스페이스의 일정과 회의 조건을 확인합니다.</p>
+    <p className="muted">팀 일정 조율 서비스 v2입니다.</p>
     {!auth.configured ? <div className="notice error">로그인 연결을 설정하지 못했습니다. 서비스 관리자에게 문의해주세요.</div> : <>
       <div className="auth-tabs"><button className={mode === "login" ? "active" : ""} onClick={() => { setMode("login"); setError(""); setMessage(""); }} disabled={busy}>로그인</button><button className={mode === "signup" ? "active" : ""} onClick={() => { setMode("signup"); setError(""); setMessage(""); }} disabled={busy}>회원가입</button></div>
       {(error || auth.authError) && <div className="notice error" role="alert">{error || auth.authError}</div>}
